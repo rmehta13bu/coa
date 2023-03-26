@@ -82,7 +82,7 @@ void print_registers(CPU *cpu){
 
     printf("--------------------------------\n");
     for (int reg=0; reg<REG_COUNT; reg++) {
-        printf("REG[%2d]   |   Value=%d  \n",reg,cpu->regs[reg].value);
+        printf("REG[%2d]   |   Value=%d  \n",reg,valueRegister[reg]);
         printf("--------------------------------\n");
     }
     printf("================================\n\n");
@@ -95,7 +95,7 @@ void print_display(CPU *cpu, int cycle){
 
    for (int reg=0; reg<REG_COUNT; reg++) {
        
-        printf("REG[%2d]   |   Value=%d  \n",reg,cpu->regs[reg].value);
+        printf("REG[%2d]   |   Value=%d  \n",reg,valueRegister[reg]);
         printf("--------------------------------\n");
     }
     printf("================================\n");
@@ -228,7 +228,7 @@ void writeStats(){
 
     // fclose(f);
 
-    printf("Stalled cycles due to structural hazard: %d\n", totalStalling);
+    printf("Stalled cycles due to Data hazard: 0 \n");
     printf("Total execution cycles: %d\n", totalCycles);
     printf("Total instruction simulated: %d\n", totalInstructions);
     printf("IPC: %f\n", (float)totalInstructions / (float)totalCycles);
@@ -384,7 +384,7 @@ int Mem1Function(int executionCycle[11],int stalling){
     int myIndex = 8;
     if (myLines[executionCycle[myIndex]-1][1] != '\0'){
         if (strcmp(myLines[executionCycle[myIndex]-1][1], "ld") == 0){
-            stalling = 1;
+            // stalling = 1;
             totalStalling += 1;
         } 
     }
@@ -414,7 +414,7 @@ int WBFunction(int executionCycle[11],int stalling){
     return stalling;
 }
 
-void pipelining(int totalInstructions){
+void pipelining(int totalInstructions,CPU *cpu){
     char tempString[5];
     int executionCycle[11] = {0};
     int counter = 0;
@@ -422,6 +422,7 @@ void pipelining(int totalInstructions){
     int stalling = 0;
     while(executionCycle[10] != totalInstructions){
         for(int j=10; j>=0; j=j-1){
+            
             executionCycle[j] = executionCycle[j-1];        // TUG OF WAR
             if (j==0){
                 if(stalling==0){
@@ -443,7 +444,10 @@ void pipelining(int totalInstructions){
             writeHashDash(1);
             stalling = WBFunction(executionCycle, stalling);
         }
+        print_display(valueRegister,counter);
+        print_registers(cpu);
         counter += 1;
+        
     }
     writeHashDash(0);
     totalCycles = counter-1;
@@ -535,13 +539,14 @@ CPU_run(CPU* cpu)
 
     readMemoryMap();
     
-    print_registerss(cpu);
+    // print_registerss(cpu);
 
     totalInstructions = readFileInstructions(cpu->filename);
-    pipelining(totalInstructions);
-    writeRegisterStatus();
+    pipelining(totalInstructions,cpu);
+    
+    // writeRegisterStatus();
     writeStats();
-    print_display(cpu,0);
+    
 }
 
 
@@ -559,3 +564,4 @@ create_registers(int size){
     return regs;
 }
 
+// void add(char instype)
