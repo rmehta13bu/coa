@@ -59,7 +59,7 @@ CPU_stop(CPU* cpu)
 /*
  * This function prints the content of the registers. or create a new file
  */
-void print_registers(CPU *cpu){
+void print_registerss(CPU *cpu){
     FILE *pipeline = fopen("program_pipeline.txt", "w");
     fprintf(pipeline, "");
     fclose(pipeline);
@@ -73,7 +73,35 @@ void print_registers(CPU *cpu){
     fprintf(stats, "");
     fclose(stats);
 }
+void print_registers(CPU *cpu){
+    
+    
+    printf("================================\n\n");
 
+    printf("=============== STATE OF ARCHITECTURAL REGISTER FILE ==========\n\n");
+
+    printf("--------------------------------\n");
+    for (int reg=0; reg<REG_COUNT; reg++) {
+        printf("REG[%2d]   |   Value=%d  \n",reg,cpu->regs[reg].value);
+        printf("--------------------------------\n");
+    }
+    printf("================================\n\n");
+}
+
+void print_display(CPU *cpu, int cycle){
+    printf("================================\n");
+    printf("Clock Cycle #: %d\n", cycle);
+    printf("--------------------------------\n");
+
+   for (int reg=0; reg<REG_COUNT; reg++) {
+       
+        printf("REG[%2d]   |   Value=%d  \n",reg,cpu->regs[reg].value);
+        printf("--------------------------------\n");
+    }
+    printf("================================\n");
+    printf("\n");
+
+}
 
 // MY CODEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
@@ -507,13 +535,13 @@ CPU_run(CPU* cpu)
 
     readMemoryMap();
     
-    print_registers(cpu);
+    print_registerss(cpu);
 
     totalInstructions = readFileInstructions(cpu->filename);
     pipelining(totalInstructions);
     writeRegisterStatus();
     writeStats();
-    
+    print_display(cpu,0);
 }
 
 
