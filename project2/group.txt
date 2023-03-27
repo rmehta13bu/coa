@@ -1,0 +1,5 @@
+Rushabh Mehta
+- Data pipeline and stages forwarding with ST command, created Data hazards and Implemented with the pipeline.
+
+Janvi Bhalala
+- Implemented Memory Mapping1, Memory Mapping2 and Connected it with data pipeline and did the load and store in Mem2 function.
