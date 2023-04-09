@@ -77,18 +77,33 @@ void print_display(CPU *cpu, int cycle){
 // --------------------------------
 
 
-int wB(char** lines,int currentindex){
-    printf("writeback\t");
+int wB(char** lines,int currentindex,char* isret){
+     char *str = "ret";
+    char*str1 = "noret";
+    printf("writeback");
+    if(strcmp(isret,str)==0){
+            printf("ret WB %s\n",lines[currentindex]);
+            // divstage(lines,currentindex-1,str);
+            
+    }else{
    if(currentindex-1 ==-1){
 
         return 1;
     }else{
         printf("%s\n", lines[currentindex-1]);
     }
+    }
     // printf("%s\n", s);
 }
 
-int mem2(char** lines,int currentindex){
+int mem2(char** lines,int currentindex,char* isret){
+     char *str = "ret";
+    char*str1 = "noret";
+    if(strcmp(isret,str)==0){
+            printf("ret mem2 %s\n",lines[currentindex]);
+            wB(lines,currentindex-1,str);
+            
+    }else{
     printf("mem2\t");
      if(currentindex-1 ==-1){
 
@@ -96,10 +111,18 @@ int mem2(char** lines,int currentindex){
     }else{
         printf("%s\n", lines[currentindex-1]);
     }
-    wB(lines,currentindex-1);
+    wB(lines,currentindex-1,str1);
+    }
 }
 
-int mem1(char** lines,int currentindex){
+int mem1(char** lines,int currentindex,char* isret){
+     char *str = "ret";
+    char*str1 = "noret";
+    if(strcmp(isret,str)==0){
+            printf("ret mem1 %s\n",lines[currentindex]);
+            mem2(lines,currentindex-1,str);
+            
+    }else{
     printf("mem1\t");
      if(currentindex-1 ==-1){
 
@@ -107,10 +130,18 @@ int mem1(char** lines,int currentindex){
     }else{
         printf("%s\n", lines[currentindex-1]);
     }
-    mem2(lines,currentindex-1);
+    mem2(lines,currentindex-1,str1);
+    }
 }
 
-int br(char** lines,int currentindex){
+int br(char** lines,int currentindex,char* isret){
+     char *str = "ret";
+    char*str1 = "noret";
+    if(strcmp(isret,str)==0){
+            printf("ret br %s\n",lines[currentindex]);
+            mem1(lines,currentindex-1,str);
+            
+    }else{
     printf("br\t");
      if(currentindex-1 ==-1){
 
@@ -118,10 +149,18 @@ int br(char** lines,int currentindex){
     }else{
         printf("%s\n", lines[currentindex-1]);
     }
-    mem1(lines,currentindex-1);
+    mem1(lines,currentindex-1,str1);
+    }
 }
 
-int divstage(char** lines,int currentindex){
+int divstage(char** lines,int currentindex,char* isret){
+     char *str = "ret";
+    char*str1 = "noret";
+    if(strcmp(isret,str)==0){
+            printf("ret div %s\n",lines[currentindex]);
+            br(lines,currentindex-1,str);
+            
+    }else{
     printf("div\t");
     if(currentindex-1 ==-1){
 
@@ -129,10 +168,18 @@ int divstage(char** lines,int currentindex){
     }else{
         printf("%s\n", lines[currentindex-1]);
     }
-    br(lines,currentindex-1);
+    br(lines,currentindex-1,str1);
+    }
 }
 
-int multi(char** lines,int currentindex){
+int multi(char** lines,int currentindex,char* isret){
+     char *str = "ret";
+    char*str1 = "noret";
+    if(strcmp(isret,str)==0){
+            printf("ret multi %s\n",lines[currentindex]);
+            divstage(lines,currentindex-1,str);
+            
+    }else{
     printf("multi\t");
     if(currentindex-1 ==-1){
 
@@ -140,10 +187,18 @@ int multi(char** lines,int currentindex){
     }else{
         printf("%s\n", lines[currentindex-1]);
     }
-    divstage(lines,currentindex-1);
+    divstage(lines,currentindex-1,str1);
+    }
 }
 
-int add(char** lines,int currentindex){
+int add(char** lines,int currentindex,char* isret){
+     char *str = "ret";
+    char*str1 = "noret";
+    if(strcmp(isret,str)==0){
+            printf("ret add %s\n",lines[currentindex]);
+            multi(lines,currentindex-1,str);
+            
+    }else{
     printf("add\t");
      if(currentindex-1 ==-1){
 
@@ -151,22 +206,43 @@ int add(char** lines,int currentindex){
     }else{
         printf("%s\n", lines[currentindex-1]);
     }
-    multi(lines,currentindex-1);
+    multi(lines,currentindex-1,str1);
+    }
 }
 
-int readReg(char** lines,int currentindex){
+int readReg(char** lines,int currentindex,char* isret){
+     char *str = "ret";
+    char*str1 = "noret";
+    if(strcmp(isret,str)==0){
+            printf("ret readreg %s\n",lines[currentindex]);
+            add(lines,currentindex-1,str);
+            
+    }else{
     printf("readReg\t");
     if(currentindex-1 ==-1){
 
         return 1;
     }else{
+        // Check if or1 is register then read or1 
+        // or2 second operand
+        // or1_val = cpu->regs[or1].value
         printf("%s\n", lines[currentindex-1]);
     }
-    add(lines,currentindex-1);
+    add(lines,currentindex-1,str1);
+    }
 }
 
-int iaStage(char **lines,int currentindex){
+int iaStage(char **lines,int currentindex,char* isret){
+     char *str = "ret";
+    char*str1 = "noret";
+
+    if(strcmp(isret,str)==0){
+            printf("ret iastage %s\n",lines[currentindex]);
+            readReg(lines,currentindex-1,str);
+            
+    }else{
     printf("iastage\t");
+    
     
     if(currentindex-1 ==-1){
 
@@ -174,18 +250,27 @@ int iaStage(char **lines,int currentindex){
     }else{
         printf("%s\n", lines[currentindex-1]);
     }
-    readReg(lines,currentindex-1);
+    readReg(lines,currentindex-1,str1);
+    }
 }
 
-int decode(char **lines,int currentindex){
-    printf("decode\t");
+int decode(char **lines,int currentindex,char* isret){
+    
     char* address;
     char* inst;
     char* opcode;
     char* oprend1;
     char* operand2;
-    
+    char *str = "ret";
+    char*str1 = "noret";
 
+
+ if(strcmp(isret,str)==0){
+            printf("ret decode %s\n",lines[currentindex]);
+            iaStage(lines,currentindex-1,str);
+            
+    }else{
+    printf("decode\t");
     if(currentindex-1 ==-1){
 
         return 1;
@@ -213,7 +298,7 @@ int decode(char **lines,int currentindex){
         inst = words[1];
         opcode = words[2];
         oprend1=words[3];
-        int i = iaStage(lines,currentindex-1);
+        int i = iaStage(lines,currentindex-1,str1);
         if(i ==1){
         return 1;
     }
@@ -223,7 +308,7 @@ int decode(char **lines,int currentindex){
         opcode = words[2];
         oprend1=words[3];
         operand2=words[4];
-         int i = iaStage(lines,currentindex-1);
+         int i = iaStage(lines,currentindex-1,str1);
         if(i ==1){
         return 1;
     }
@@ -231,7 +316,7 @@ int decode(char **lines,int currentindex){
 
     }
     
-
+        }
     
 //     printf("%s\n",address);
 //    printf("%s\n",inst);
@@ -244,6 +329,7 @@ void fetch(const char *filename){
     FILE *fp;
     char line[MAX_LINE_LENGTH];
     char *lines[MAX_LINES];
+    char *lines1[MAX_LINES];
     char arr[MAX_LINES];
     int line_count = 0;
     int count=0;
@@ -264,7 +350,9 @@ void fetch(const char *filename){
 
         // Allocate memory for the line and copy it to the lines array
         lines[line_count] = malloc(strlen(line) + 1);
+        lines1[line_count] = malloc(strlen(line) + 1);
         strcpy(lines[line_count], line);
+        strcpy(lines1[line_count], line);
 
         // Increment the line count
         line_count++;
@@ -278,14 +366,30 @@ void fetch(const char *filename){
     fclose(fp);
 
     // Print the lines stored in the lines array
-    for (int i = 0; i < line_count+10; i++) {
+    for (int i = 0; i < line_count+11; i++) {
         
-        printf("fetchstage %i\n",i);
-        printf("%s\n", lines[i]);
-        int r = decode(lines,i);
+        char *str = "ret";
+        char*str1 = "noret";
+
+        if(lines[i]==NULL){
+            printf("ret fetch %s\n",lines1[i]);
+            decode(lines1,i-1,str);
+        }else{
+        char* val = strtok(lines[i]," ");
+        char* val1 = strtok(NULL," ");
+         if(strcmp(val1,str)==0){
+            printf("ret fetch %s\n",lines1[i]);
+            decode(lines1,i-1,str);
+            
+        }else{
+        printf(" fetch %s\n",lines1[i]);
+        int r = decode(lines1,i,str1);
         if(r==1){
             printf("1 is return\n");
             continue;
+        }
+        }
+        
         }
     }
 }
