@@ -17,6 +17,7 @@ typedef struct CPU
 	/* Integer register file */
 	Register *regs;
 	const char *filename;
+	int clock;
 	
 } CPU;
 
